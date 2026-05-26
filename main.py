@@ -6,21 +6,30 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.guilds = True
+class MusicCommunityBot(commands.Bot):
+    def __init__(self):
+        super().__init__(
+            command_prefix='!',
+            intents=discord.Intents.all(),
+            help_command=None
+        )
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+    async def setup_hook(self):
+        if not os.path.exists('./cogs'):
+            os.makedirs('./cogs')
+            
+        for filename in os.listdir('./cogs'):
+            if filename.endswith('.py'):
+                await self.load_extension(f'cogs.{filename[:-3]}')
+        
+        await self.tree.sync()
+        print("Cogs cargados y Slash Commands sincronizados.")
+
+bot = MusicCommunityBot()
 
 @bot.event
 async def on_ready():
-    if not os.path.exists('./cogs'):
-        os.makedirs('./cogs')
-        
-    for filename in os.listdir('./cogs'):
-        if filename.endswith('.py'):
-            await bot.load_extension(f'cogs.{filename[:-3]}')
-    print(f'{bot.user} online')
+    print(f'Bot {bot.user} conectado y 100% operativo.')
 
 if __name__ == '__main__':
     bot.run(TOKEN)
