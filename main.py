@@ -6,7 +6,6 @@ import asyncpg
 import traceback
 from flask import Flask
 from threading import Thread
-from cogs.verificacion import VerificacionView
 from cogs.tickets import TicketView, CloseAndClaimView
 from cogs.producer_tools import SharePackStaticView
 
@@ -47,7 +46,6 @@ class MusicCommunityBot(commands.Bot):
             if filename.endswith('.py') and filename != '__init__.py':
                 await self.load_extension(f'cogs.{filename[:-3]}')
         
-        self.add_view(VerificacionView())
         self.add_view(TicketView())
         self.add_view(CloseAndClaimView())
         self.add_view(SharePackStaticView())
